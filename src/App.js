@@ -19,12 +19,37 @@ import theme from "./theme"
 
 import InitialLoading from "./components/InitialLoading";
 import Recommendation from './pages/Recommendation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { initializeApp } from "firebase/app";
+import {
+    getAuth
+} from "firebase/auth";
+
+import { useAuthState } from "react-firebase-hooks/auth";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD__H09LoNbgRXWF-Z1xGYRjO2XtDtRsuQ",
+  authDomain: "whattoeat-7cff1.firebaseapp.com",
+  projectId: "whattoeat-7cff1",
+  storageBucket: "whattoeat-7cff1.appspot.com",
+  messagingSenderId: "545758974700",
+  appId: "1:545758974700:web:6ea7741cfc9dd73b144bc9",
+  measurementId: "G-73KN1655CQ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
 
 function App() {
 
 
   const [isLoading, setIsLoading] = useState(true) // Checks whether to show the loading page or not
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const [user, loading, error] = useAuthState(auth);
 
 
   useEffect(() => {
@@ -43,6 +68,12 @@ function App() {
   }, [])
 
 
+  useEffect(() => {
+    console.log(user);
+    console.log(loading);
+    console.log('working');
+  }, [user, loading])
+
 
 
   return (
@@ -53,9 +84,9 @@ function App() {
         {isLoading ?
           <InitialLoading />
           :
-          !loggedIn ?
+          !user ?
           <Routes>
-            <Route path="login" element={<Login />} />
+            <Route path="/" element={<Login />} />
             <Route path="register" element={<Register />} />
           </Routes>
           :
@@ -77,6 +108,7 @@ function App() {
           </>
         }
       </ThemeProvider>
+      <ToastContainer />
     </>
   );
 }

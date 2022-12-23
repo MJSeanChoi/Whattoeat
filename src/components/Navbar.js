@@ -11,6 +11,26 @@ import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import ListItemButton from '@mui/material/ListItemButton';
 import { Link } from "react-router-dom";
+import { initializeApp } from "firebase/app";
+import {
+    getAuth,
+    signOut
+} from "firebase/auth";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyD__H09LoNbgRXWF-Z1xGYRjO2XtDtRsuQ",
+    authDomain: "whattoeat-7cff1.firebaseapp.com",
+    projectId: "whattoeat-7cff1",
+    storageBucket: "whattoeat-7cff1.appspot.com",
+    messagingSenderId: "545758974700",
+    appId: "1:545758974700:web:6ea7741cfc9dd73b144bc9",
+    measurementId: "G-73KN1655CQ"
+  };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
 
 const drawerWidth = 240;
 const navItems = ['Home', 'EAT!'];
@@ -26,6 +46,10 @@ function Navbar(props) {
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
+
+    const logout = () => {
+        signOut(auth);
+    }
 
 
     const drawer = (
@@ -90,6 +114,9 @@ function Navbar(props) {
                             </Link>
 
                         ))}
+                        <Button onClick = {() => {logout();}}>
+                            <Typography color="primary">Sign Out</Typography>
+                        </Button>
                     </Box>
                 </Toolbar>
             </AppBar>

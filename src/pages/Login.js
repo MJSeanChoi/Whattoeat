@@ -2,11 +2,50 @@ import React, { useState } from "react";
 import Box from '@mui/material/Box';
 import { CircularProgress, Typography, TextField, Button } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
+import { initializeApp } from "firebase/app";
+import {
+    getAuth,
+    signInWithEmailAndPassword
+} from "firebase/auth";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyD__H09LoNbgRXWF-Z1xGYRjO2XtDtRsuQ",
+    authDomain: "whattoeat-7cff1.firebaseapp.com",
+    projectId: "whattoeat-7cff1",
+    storageBucket: "whattoeat-7cff1.appspot.com",
+    messagingSenderId: "545758974700",
+    appId: "1:545758974700:web:6ea7741cfc9dd73b144bc9",
+    measurementId: "G-73KN1655CQ"
+  };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
 
 export default function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const login = async() => {
+        if(email == "")
+        {
+            alert("Please input an email.");
+            return;
+        }
+        else if(password == "")
+        {
+            alert("Please input a password");
+            return;
+        }
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+          } catch (err) {
+            console.error(err);
+            alert(err.message);
+          }
+    }
 
     return (
         <Box width={"100vw"} height={"100vh"} backgroundColor={"#FF9457"} display={"flex"} flexDirection={'column'} justifyContent="center" alignItems={'center'}>
@@ -45,7 +84,7 @@ export default function Login() {
                                 textAlign: 'center'
                             }}
                         >
-                            <Button variant='contained' size={'small'}  sx={{ fontSize: "11px", marginTop: 1 }} className={"blinking"}>Login</Button>
+                            <Button variant='contained' size={'small'}  sx={{ fontSize: "11px", marginTop: 1 }} className={"blinking"} onClick={() => {login();}}>Login</Button>
                         </div>
                     </div>
                 </Box>

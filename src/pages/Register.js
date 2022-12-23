@@ -5,7 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import {
     getAuth,
-    createUserWithEmailAndPassword
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
 } from "firebase/auth";
 
 import {
@@ -16,6 +17,7 @@ import {
     where,
     addDoc
 } from "firebase/firestore";
+import { toast } from 'react-toastify';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -72,7 +74,19 @@ export default function Register() {
                 uid: user.uid,
                 name: name,
                 email: email
-            })
+            });
+
+            toast("Successfully Signed Up!", {
+                position: "top-center"
+                }
+            )
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+              } catch (err) {
+                console.error(err);
+                alert(err.message);
+              }
         } catch (err) {
             console.error(err);
             alert(err.message);
