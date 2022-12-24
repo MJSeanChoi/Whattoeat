@@ -27,6 +27,7 @@ export default function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const login = async() => {
         if(email == "")
@@ -40,10 +41,13 @@ export default function Login() {
             return;
         }
         try {
+            setLoading(true);
             await signInWithEmailAndPassword(auth, email, password);
+            setLoading(false);
           } catch (err) {
             console.error(err);
-            alert(err.message);
+            alert("Please check your email or password.");
+            setLoading(false);
           }
     }
 
@@ -84,7 +88,14 @@ export default function Login() {
                                 textAlign: 'center'
                             }}
                         >
-                            <Button variant='contained' size={'small'}  sx={{ fontSize: "11px", marginTop: 1 }} className={"blinking"} onClick={() => {login();}}>Login</Button>
+                            <Button variant='contained' size={'small'}  sx={{ fontSize: "11px", marginTop: 1 }} className={"blinking"} onClick={() => {login();}}>
+                                {
+                                    loading ?
+                                    <CircularProgress size="1rem" color='primary' />
+                                    :
+                                    "Login"
+                                }
+                            </Button>
                         </div>
                     </div>
                 </Box>

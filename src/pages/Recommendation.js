@@ -7,6 +7,32 @@ import IconButton from '@mui/material/IconButton';
 import Heading from '../components/Heading';
 import RestaurantList from "./RestaurantList";
 import axios from 'axios';
+import { initializeApp } from "firebase/app";
+import {
+    getFirestore,
+    query,
+    getDocs,
+    collection,
+    where,
+    addDoc,
+    getDoc,
+    setDoc,
+    doc,
+    updateDoc,
+    increment
+} from "firebase/firestore";
+const firebaseConfig = {
+    apiKey: "AIzaSyD__H09LoNbgRXWF-Z1xGYRjO2XtDtRsuQ",
+    authDomain: "whattoeat-7cff1.firebaseapp.com",
+    projectId: "whattoeat-7cff1",
+    storageBucket: "whattoeat-7cff1.appspot.com",
+    messagingSenderId: "545758974700",
+    appId: "1:545758974700:web:6ea7741cfc9dd73b144bc9",
+    measurementId: "G-73KN1655CQ"
+  };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const LIMIT_RESULT_COUNT = 8
 
@@ -22,13 +48,17 @@ function Recommendation() {
     //nny ->sandwich
     //nnn ->pasta
 
+    const menuOption1 = ['Fried Chicken', 'Burrito', 'Burger', 'Sushi'];
+    const menuOption2 = ['Fish Salad', 'Steak Salad'];
+    const menuOption3 = ['Salad', 'Vegetable Soup', 'Sashimi', 'Sandwich'];
+    const menuOption4 = ['Burger', 'Ramen', 'Chicken', 'Taco', 'Sandwich', 'Pizza', 'Hot Dog'];
+    const menuOption5 = ['Steak', 'Pasta', 'Burger', 'Fried Chicken', 'Ribs', 'Fried Rice'];
 
     const data = [
 
-
-        { question: "Would you like some Mexican food today?", choices: ['YES', 'NO'] },
         { question: "Do you want something greasy?", choices: ['YES', 'NO'] },
         { question: "Do you want something simple and fast?", choices: ['YES', 'NO'] },
+        { question: "What kind of body type do you want?", choices: ['Muscular', 'Slim', "Doesn't Matter"]}
     ]
 
 
@@ -109,7 +139,7 @@ function Recommendation() {
     // }
 
 
-    const handleResponse = (val) => {
+    const handleResponse = async(val) => {
         if (currentQuestionIndex + 1 < data.length) {
             setIsLoading(true)
             setResponse(prev => ([...prev, val]))
@@ -128,13 +158,16 @@ function Recommendation() {
 
             }
             //add last
-            if (val === "YES") {
-                results += "y"
-            } else {
-                results += "n"
+            if (val === "Muscular") {
+                results += "1"
+            } else if(val === "Slim") {
+                results += "2"
 
             }
-
+            else
+            {
+                results += "3"
+            }
 
 
             //yyy -> taco
@@ -146,43 +179,57 @@ function Recommendation() {
             //nny ->sandwich
             //nnn ->pasta
             let searchKey = ""
-            if (results === "yyy") {
-                setKeyword(menu[0])
-                searchKey = menu[0]
-            } else if (results === "yyn") {
-                setKeyword(menu[1])
-                searchKey = menu[1]
+            if (results === "yy1") {
+                // Menu option1
+                let output = menuOption1[Math.floor(Math.random()*menuOption1.length)];
+                setKeyword(output)
+                searchKey = output
+            } else if (results === "nn1") {
+                // Menu option2
+                let output = menuOption2[Math.floor(Math.random()*menuOption2.length)];
+                setKeyword(output)
+                searchKey = output
 
-            } else if (results === "yny") {
-                setKeyword(menu[2])
-                searchKey = menu[2]
+            } else if (results === "nn2") {
+                // Menu option3
+                let output = menuOption3[Math.floor(Math.random()*menuOption3.length)];
+                setKeyword(output)
+                searchKey = output
 
-            } else if (results === "ynn") {
-                setKeyword(menu[3])
-                searchKey = menu[3]
+            } else if (results === "yy3") {
+                // Menu option4
+                let output = menuOption4[Math.floor(Math.random()*menuOption4.length)];
+                setKeyword(output)
+                searchKey = output
 
-            } else if (results === "nyy") {
-                setKeyword(menu[4])
-                searchKey = menu[4]
-
-            } else if (results === "nyn") {
-                setKeyword(menu[5])
-                searchKey = menu[5]
-
-            } else if (results === "nny") {
-                setKeyword(menu[6])
-                searchKey = menu[6]
-
-            } else if (results === "nnn") {
-                setKeyword(menu[7])
-                searchKey = menu[7]
+            } else if (results === "yn3") {
+                // Menu option5
+                let output = menuOption5[Math.floor(Math.random()*menuOption5.length)];
+                setKeyword(output)
+                searchKey = output
 
             } else {
-                setKeyword(menu[7])
-                searchKey = menu[7]
+                // Menu option5
+                let output = menuOption5[Math.floor(Math.random()*menuOption5.length)];
+                setKeyword(output)
+                searchKey = output
 
             }
 
+            const docRef = doc(db, "cities", searchKey);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                await updateDoc(docRef, {
+                    count: increment(1)
+                });
+            } else {
+              // Add a new document in collection "cities"
+                await setDoc(doc(db, "trend", searchKey), {
+                    name: searchKey,
+                    count: 1
+                });
+            }            
 
             setFinished(true)
             getRestaurantData(searchKey)

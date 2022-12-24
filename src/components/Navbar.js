@@ -10,7 +10,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import ListItemButton from '@mui/material/ListItemButton';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import {
     getAuth,

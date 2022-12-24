@@ -43,6 +43,7 @@ export default function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const registerWithEmailAndPassword = async() => {
         if(name == "")
@@ -67,6 +68,7 @@ export default function Register() {
         }
 
         try {
+            setLoading(true);
             const res = await createUserWithEmailAndPassword(auth, email, password);
             const user = res.user
 
@@ -75,6 +77,7 @@ export default function Register() {
                 name: name,
                 email: email
             });
+            setLoading(false);
 
             toast("Successfully Signed Up!", {
                 position: "top-center"
@@ -85,11 +88,11 @@ export default function Register() {
                 await signInWithEmailAndPassword(auth, email, password);
               } catch (err) {
                 console.error(err);
-                alert(err.message);
               }
         } catch (err) {
             console.error(err);
-            alert(err.message);
+            alert("Please make sure you input a valid email and password.")
+            setLoading(false);
         }
 
     }
@@ -137,7 +140,14 @@ export default function Register() {
                                 textAlign: 'center'
                             }}
                         >
-                            <Button variant='contained' size={'small'}  sx={{ fontSize: "11px", marginTop: 1 }} className={"blinking"} onClick={() => {registerWithEmailAndPassword();}}>Sign Up</Button>
+                            <Button variant='contained' size={'small'}  sx={{ fontSize: "11px", marginTop: 1 }} className={"blinking"} onClick={() => {registerWithEmailAndPassword();}}>
+                                {
+                                    loading ?
+                                    <CircularProgress size="1rem" color='primary' />
+                                    :
+                                    "Sign Up"
+                                }
+                            </Button>
                         </div>
                     </div>
                 </Box>
@@ -147,7 +157,7 @@ export default function Register() {
                         marginTop: 10
                     }}
                 >
-                    Already have an account? <Link to={`/login`} style={{ textDecoration: "none", textDecorationLine: 'underline' }}>Login</Link>
+                    Already have an account? <Link to={`/`} style={{ textDecoration: "none", textDecorationLine: 'underline' }}>Login</Link>
                 </div>
             </div>
         </Box >

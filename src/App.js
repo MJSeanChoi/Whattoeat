@@ -14,6 +14,7 @@ import Home from "./pages/Home"
 import RestaurantList from "./pages/RestaurantList"
 import Login from "./pages/Login";
 import Register from './pages/Register';
+import { Link, useNavigate } from "react-router-dom";
 
 import theme from "./theme"
 
@@ -51,6 +52,8 @@ function App() {
 
   const [user, loading, error] = useAuthState(auth);
 
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     AOS.init(); // Initializing the animate on scroll library
@@ -69,10 +72,8 @@ function App() {
 
 
   useEffect(() => {
-    console.log(user);
-    console.log(loading);
-    console.log('working');
-  }, [user, loading])
+    navigate("/");
+  }, [user])
 
 
 
@@ -81,7 +82,7 @@ function App() {
       <ThemeProvider theme={theme}> 
 
 
-        {isLoading ?
+        {isLoading || loading ?
           <InitialLoading />
           :
           !user ?
