@@ -48,11 +48,18 @@ function Recommendation() {
     //nny ->sandwich
     //nnn ->pasta
 
-    const menuOption1 = ['Fried Chicken', 'Burrito', 'Burger', 'Sushi'];
-    const menuOption2 = ['Fish Salad', 'Steak Salad'];
-    const menuOption3 = ['Salad', 'Vegetable Soup', 'Sashimi', 'Sandwich'];
-    const menuOption4 = ['Burger', 'Ramen', 'Chicken', 'Taco', 'Sandwich', 'Pizza', 'Hot Dog'];
-    const menuOption5 = ['Steak', 'Pasta', 'Burger', 'Fried Chicken', 'Ribs', 'Fried Rice'];
+    const menuOption1 = ['Fried Chicken', 'Burrito', 'Burger', 'Taco', 'Grilled Salmon'];
+    const menuOption2 = ['Fish Salad', 'Steak Salad', 'Chicken Breast'];
+    const menuOption3 = ['Egg Fried Rice', 'Beef Noodles', 'Steak', 'Turkey', 'Grilled Seafood'];
+    const menuOption4 = ['Yogurt', 'Breakfast Burrito', 'Chicken Sandwich', 'Steak Salad', 'Fish Salad', 'Sushi', 'Eggs'];
+    const menuOption5 = ['Salad', 'Vegetable Soup', 'Sashimi', 'Sandwich'];
+    const menuOption6 = ['None'];
+    const menuOption7 = ['Salmon', 'Vegetable Stir Fry', 'Beef and Broccoli'];
+    const menuOption8 = ['Salad', 'Sandwich'];
+    const menuOption9 = ['Burger', 'Ramen', 'Chicken', 'Taco', 'Sandwich', 'Pizza', 'Hot Dog'];
+    const menuOption10 = ['Steak', 'Pasta', 'Burger', 'Fried Chicken', 'Ribs', 'Fried Rice'];
+    const menuOption11 = ['Salad', 'Burrito', 'Sandwich', 'Bagel', 'Sushi Rolls', 'Chicken', 'Ramen'];
+    const menuOption12 = ['Salad', 'Chicken', 'Pasta', 'Ramen', 'Sushi', 'Seafood', 'Raw Salmon'];
 
     const data = [
 
@@ -190,46 +197,86 @@ function Recommendation() {
                 setKeyword(output)
                 searchKey = output
 
-            } else if (results === "nn2") {
-                // Menu option3
+            } else if (results === "yn1") {
+                // Menu option2
                 let output = menuOption3[Math.floor(Math.random()*menuOption3.length)];
                 setKeyword(output)
                 searchKey = output
 
-            } else if (results === "yy3") {
-                // Menu option4
+            } else if (results === "ny1") {
+                // Menu option2
                 let output = menuOption4[Math.floor(Math.random()*menuOption4.length)];
                 setKeyword(output)
                 searchKey = output
 
-            } else if (results === "yn3") {
-                // Menu option5
+            } else if (results === "nn2") {
+                // Menu option3
                 let output = menuOption5[Math.floor(Math.random()*menuOption5.length)];
+                setKeyword(output)
+                searchKey = output
+
+            } else if (results === "yy2") {
+                // Menu option4
+                let output = menuOption6[Math.floor(Math.random()*menuOption6.length)];
+                setKeyword(output)
+                searchKey = output
+
+            } else if (results === "yn2") {
+                // Menu option5
+                let output = menuOption7[Math.floor(Math.random()*menuOption7.length)];
+                setKeyword(output)
+                searchKey = output
+
+            } else if (results === "ny2") {
+                // Menu option2
+                let output = menuOption8[Math.floor(Math.random()*menuOption8.length)];
+                setKeyword(output)
+                searchKey = output
+
+            } else if (results === "yy3") {
+                // Menu option2
+                let output = menuOption9[Math.floor(Math.random()*menuOption9.length)];
+                setKeyword(output)
+                searchKey = output
+
+            } else if (results === "yn3") {
+                // Menu option2
+                let output = menuOption10[Math.floor(Math.random()*menuOption10.length)];
+                setKeyword(output)
+                searchKey = output
+
+            } else if (results === "ny3") {
+                // Menu option2
+                let output = menuOption11[Math.floor(Math.random()*menuOption11.length)];
                 setKeyword(output)
                 searchKey = output
 
             } else {
                 // Menu option5
-                let output = menuOption5[Math.floor(Math.random()*menuOption5.length)];
+                let output = menuOption12[Math.floor(Math.random()*menuOption12.length)];
                 setKeyword(output)
                 searchKey = output
 
             }
-
-            const docRef = doc(db, "cities", searchKey);
-            const docSnap = await getDoc(docRef);
             
-            if (docSnap.exists()) {
-                await updateDoc(docRef, {
-                    count: increment(1)
-                });
-            } else {
-              // Add a new document in collection "cities"
-                await setDoc(doc(db, "trend", searchKey), {
-                    name: searchKey,
-                    count: 1
-                });
-            }            
+            if(searchKey != 'None')
+            {
+                const docRef = doc(db, "trend", searchKey);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    await updateDoc(docRef, {
+                        count: increment(1)
+                    });
+                } else {
+                  // Add a new document in collection "cities"
+                    await setDoc(doc(db, "trend", searchKey), {
+                        name: searchKey,
+                        count: 1
+                    });
+                }   
+            }
+         
 
             setFinished(true)
             getRestaurantData(searchKey)
@@ -241,7 +288,7 @@ function Recommendation() {
 
         <Box sx={{ width: "100%", minHeight: "70vh" }}>
             <Box mt={15} mb={8} data-aos="fade-right" data-aos-duration="1000" display={'flex'} justifyContent='space-between'>
-                <Heading title={"Recommendation"} content={finished ? `${keyword} is pretty good!` : "Which food type are you into?"} />
+                <Heading title={"Recommendation"} content={finished ? keyword == 'None' ? 'No Recommendation' : `${keyword} is pretty good!` : "Which food type are you into?"} />
                 <Box data-aos="fade-left" data-aos-duration="2000" mt={5}>
                     <IconButton color="primary" aria-label="reset" onClick={() => { setIsLoading(true); setFinished(false); setResponse([]); setCurrentQuestionIndex(0) }}>
                         <RestartAltIcon />
@@ -274,6 +321,29 @@ function Recommendation() {
                     <>
 
                         {finished ?
+                            keyword == "None"
+                            ?
+                            <>
+                            <Box data-aos="fade-left" data-aos-duration="2500" data-aos-offset="300" display={"flex"} justifyContent={"center"} flexDirection={"column"} alignItems={'center'}>
+                                    < img
+                                        alt={"loading"}
+                                        width={100}
+                                        src='./logo.png' >
+                                    </img >
+
+                                    <Box mt={0} mb={0} display={'flex'} flexDirection={"column"}>
+                                        <Typography variant={"overline"} color={'#777'}
+                                            sx={{ letterSpacing: "2px", fontSize: "16px", fontWeight: "bold" }}>
+                                            What To Eat?
+                                        </Typography>
+                                        <Typography variant={"overline"} color={'#888'}
+                                            sx={{ fontSize: "13px" }}>
+                                            ○ There are no types of food that are greasy that can help with your diet. 
+                                        </Typography>
+                                    </Box>
+                                </Box >
+                            </>
+                            :
                             <>
                                 <Box data-aos="fade-left" data-aos-duration="2500" data-aos-offset="300" display={"flex"} justifyContent={"center"} flexDirection={"column"} alignItems={'center'}>
                                     < img

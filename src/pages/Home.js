@@ -15,6 +15,38 @@ import Slide from '@mui/material/Slide';
 import axios from "axios";
 import FullDialog from "../components/FullDialog";
 
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
+
+import { initializeApp } from "firebase/app";
+import {
+    getFirestore,
+    query,
+    getDocs,
+    collection,
+    where,
+    addDoc,
+    getDoc,
+    setDoc,
+    doc,
+    updateDoc,
+    increment,
+    orderBy,
+    limit
+} from "firebase/firestore";
+const firebaseConfig = {
+    apiKey: "AIzaSyD__H09LoNbgRXWF-Z1xGYRjO2XtDtRsuQ",
+    authDomain: "whattoeat-7cff1.firebaseapp.com",
+    projectId: "whattoeat-7cff1",
+    storageBucket: "whattoeat-7cff1.appspot.com",
+    messagingSenderId: "545758974700",
+    appId: "1:545758974700:web:6ea7741cfc9dd73b144bc9",
+    measurementId: "G-73KN1655CQ"
+  };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 
 const containerStyle = {
     width: '100%',
@@ -70,6 +102,23 @@ function random(seed) {
 
 function Home() {
 
+    const [trending, setTrending] = useState([]);
+
+    const responsive = {
+        desktop: {
+            breakpoint: { max: 3000, min: 1024 },
+            items: 1
+        },
+        tablet: {
+            breakpoint: { max: 1024, min: 464 },
+            items: 1
+        },
+        mobile: {
+            breakpoint: { max: 464, min: 0 },
+            items: 1
+        }
+    };
+
 
     useEffect(() => {
         const today = new Date();
@@ -87,6 +136,23 @@ function Home() {
 
         setFoodToday(menu[todayDate % menu.length])
     }, []);
+
+    useEffect(() => {
+        const getTrending = async() => {
+            const docRef = collection(db, "trend");
+            const q = query(docRef, orderBy("count", "desc"), limit(3));
+            const querySnapshot = await getDocs(q);
+            var tempArray = [];
+            querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+                var data = doc.data();
+                tempArray.push(data['name'])
+            });
+            setTrending(tempArray);
+        }
+
+        getTrending();
+    }, [])
 
     const navigate = useNavigate()
 
@@ -326,6 +392,35 @@ function Home() {
                                 <Typography variant="body1" fontWeight={'bold'} color={'#333'}>{foodToday}</Typography>
                             </Grid>
                         </Grid>
+
+                        <Grid item flexDirection={'column'} >
+                            <Grid item>
+                                <Typography variant="body2" sx={{ color: "darkGrey" }}>Trending</Typography>
+                            </Grid>
+                            <Grid item>
+                                <div style={{width: 200}}>
+                                    <Carousel
+                                        responsive={responsive}
+                                        arrows={false}
+                                        swipeable={true}
+                                        showDots={false}
+                                        draggable={true}
+                                        infinite={true}
+                                        autoPlay={true}
+                                        rewind={false}
+                                        autoPlaySpeed={2000}
+                                        rtl={true}
+                                    >
+                                        {
+                                            trending.map((el, i) => (
+                                                <Typography key={i} variant="body1" fontWeight={'bold'} color={'#333'} textAlign={'center'}>{el}</Typography>
+                                            ))
+                                        }
+                                    </Carousel>
+                                </div>
+                            </Grid>
+                        </Grid>
+
 
                         <Grid item flexDirection={'column'}>
                             <Grid item>
